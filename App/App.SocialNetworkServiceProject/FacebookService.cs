@@ -7,34 +7,14 @@ using System.Threading.Tasks;
 
 namespace App.SocialNetworkService
 {
-    class FacebookService : ISocialNetworkService 
+    class FacebookService : ISocialNetworkService
     {
-        public string UserOAuthWithoutBrowser(string login, string password)
+        public string AppOAuth()
         {
             throw new NotImplementedException();
         }
 
-        public string UserOAuthWithoutBrowser(string token)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string UserOAuthInBrowser(string login, string password)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string AppOAuth(string login, string password)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string AppOAuth(string token)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<T> GetLastEntries<T>(string username, int count)
+        public List<string> GetLastEntries(string username, int count)
         {
             throw new NotImplementedException();
         }
@@ -44,12 +24,7 @@ namespace App.SocialNetworkService
             throw new NotImplementedException();
         }
 
-        public string MakeRequest(Url url, string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<T> GetLastEntries<T>(int count)
+        public string UserOAuth()
         {
             throw new NotImplementedException();
         }

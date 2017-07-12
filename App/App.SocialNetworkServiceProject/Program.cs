@@ -1,8 +1,11 @@
 ﻿ using System;
 using System.Collections.Generic;
-using System.Linq;
+ using System.Configuration;
+ using System.Diagnostics;
+ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+ using LinqToTwitter;
 
 namespace App.SocialNetworkService
 {
@@ -10,6 +13,7 @@ namespace App.SocialNetworkService
     {
         static void Main(string[] args)
         {
+
         }
     }
 }

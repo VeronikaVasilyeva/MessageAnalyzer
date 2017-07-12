@@ -1,60 +1,115 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Policy;
-using System.Text;
 using System.Threading.Tasks;
+using LinqToTwitter;
 
 namespace App.SocialNetworkService
 {
     class TwitterService : ISocialNetworkService
     {
-        private readonly static string ConsumerKey = "5PFhmG58BgUq9MkmSOXdr9P9o";
-        private readonly static string ConsumerSecret = "9K9uIdrgN7j3XGg8SDvLKpVN0q1WPR0BfVDWGWRSH0qd9oA05M";
+        private IAuthorizer _userAuth;
+        private IAuthorizer _appAuth;
 
-        public string UserOAuthWithoutBrowser(string login, string password)
+        public string UserOAuth()
         {
-            throw new NotImplementedException();
+            try
+            {
+                OAuth1().Wait();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            return "Успешная авторизация пользователя " + _userAuth.CredentialStore.ScreenName;
         }
 
-        public string UserOAuthWithoutBrowser(string token)
+        public string AppOAuth()
         {
-            throw new NotImplementedException();
+            try
+            {
+                OAuth2().Wait();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            return "Успешная авторизация приложения";
         }
 
-        public string UserOAuthInBrowser(string login, string password)
+        public List<string> GetLastEntries(string username, int count)
         {
-            throw new NotImplementedException();
-        }
+            var auth = _userAuth ?? _appAuth;
 
-        public string AppOAuth(string login, string password)
-        {
-            throw new NotImplementedException();
-        }
+            using (var twitterCtx = new TwitterContext(auth))
+            {
+                var statusTweets =
+                    from tweet in twitterCtx.Status
+                    where tweet.Type == StatusType.User
+                          && tweet.ScreenName == username
+                          && tweet.Count == count
+                    select tweet;
 
-        public string AppOAuth(string token)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<T> GetLastEntries<T>(string username, int count)
-        {
-            throw new NotImplementedException();
+                return statusTweets.Select(i => i.Text).ToList();
+            }
         }
 
         public string PostEntry(string message)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (var twitterCtx = new TwitterContext(_userAuth))
+                {
+                    twitterCtx.TweetAsync(message).Wait();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            return "Успешно добавлен ваш твит";
         }
 
-        public string MakeRequest(Url url, string data)
+        private async Task OAuth2()
         {
-            throw new NotImplementedException();
+            _appAuth = new ApplicationOnlyAuthorizer
+            {
+                CredentialStore = new InMemoryCredentialStore()
+                {
+                    ConsumerKey = ConfigurationManager.AppSettings["twitterConsumerKey"],
+                    ConsumerSecret = ConfigurationManager.AppSettings["twitterSecretKey"]
+                }
+            };
+
+            await _appAuth.AuthorizeAsync();
         }
 
-        public List<T> GetLastEntries<T>(int count)
+        private async Task OAuth1()
         {
-            throw new NotImplementedException();
+            this._userAuth = new PinAuthorizer()
+            {
+                CredentialStore = new InMemoryCredentialStore
+                {
+                    ConsumerKey = ConfigurationManager.AppSettings["twitterConsumerKey"],
+                    ConsumerSecret = ConfigurationManager.AppSettings["twitterSecretKey"]
+                },
+                GoToTwitterAuthorization = pageLink => Process.Start(pageLink),
+                GetPin = () =>
+                {
+                    Console.WriteLine("Вы должны получить PIN.\n");
+                    Console.Write("Введите PIN: ");
+                    return Console.ReadLine();
+                }
+            };
+
+            await _userAuth.AuthorizeAsync();
         }
     }
 }

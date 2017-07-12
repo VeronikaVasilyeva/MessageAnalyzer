@@ -9,21 +9,13 @@ namespace App.SocialNetworkService
 {
     interface ISocialNetworkService
     {
-        string UserOAuthWithoutBrowser(string login, string password);
+        string UserOAuth();
 
-        string UserOAuthWithoutBrowser(string token);
-
-        string UserOAuthInBrowser(string login, string password);
-
-        //return access_token, 
-        string AppOAuth(string login, string password);
-
-        string AppOAuth(string token);
+        string AppOAuth();
         
-        List<T> GetLastEntries<T>(string username, int count);
+        List<string> GetLastEntries(string username, int count);
 
         string PostEntry(string message);
 
-        string MakeRequest(Url url, string data);
     }
 }
