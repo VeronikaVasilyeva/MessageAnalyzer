@@ -27,7 +27,7 @@ namespace App.StatisticService
                     result[character] = 0;
                 }
 
-                result[character] = Math.Round(result[character] + addition, 4);
+                result[character] = Math.Round(result[character] + addition, 3);
             }
 
             return result;
