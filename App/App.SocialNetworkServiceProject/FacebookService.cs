@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace App.SocialNetworkService
 {
-    class FacebookService : ISocialNetworkService
+    public class FacebookService : ISocialNetworkService
     {
         public string AppOAuth()
         {

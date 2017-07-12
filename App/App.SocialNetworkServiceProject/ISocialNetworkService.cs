@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace App.SocialNetworkService
 {
-    interface ISocialNetworkService
+    public interface ISocialNetworkService
     {
         string UserOAuth();
 

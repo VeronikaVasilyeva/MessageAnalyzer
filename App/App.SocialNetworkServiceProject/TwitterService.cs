@@ -9,7 +9,7 @@ using LinqToTwitter;
 
 namespace App.SocialNetworkService
 {
-    class TwitterService : ISocialNetworkService
+    public class TwitterService : ISocialNetworkService
     {
         private IAuthorizer _userAuth;
         private IAuthorizer _appAuth;

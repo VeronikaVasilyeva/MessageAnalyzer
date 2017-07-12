@@ -13,7 +13,7 @@ namespace App.SocialNetworkService
     {
         static void Main(string[] args)
         {
-
+            
         }
     }
 }

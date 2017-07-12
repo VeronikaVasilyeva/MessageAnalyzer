@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace App.SocialNetworkService
 {
-    class VkontakteService : ISocialNetworkService
+    public class VkontakteService : ISocialNetworkService
     {
         public string UserOAuth()
         {
