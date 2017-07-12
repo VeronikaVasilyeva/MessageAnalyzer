@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace App.StatisticService
 {
-    class TextStatisticService
+    public class TextStatisticService
     {
-        public static Dictionary<char, float> GetLetterFrequency(string text)
+        public static Dictionary<char, double> GetLetterFrequency(string text)
         {
             if (text == null || text.Equals(String.Empty)) return null;
 
-            var result = new Dictionary<char, float>();
+            var result = new Dictionary<char, double>();
 
             var regex = new Regex("[\\d\\W]");
             var chars = regex.Replace(text, string.Empty).ToCharArray();
 
-            float addition = 1 / (float)chars.Length;
+            double addition = 1 / (double) chars.Length;
 
             foreach (var character in chars)
             {
@@ -27,7 +27,7 @@ namespace App.StatisticService
                     result[character] = 0;
                 }
 
-                result[character] += addition;
+                result[character] = Math.Round(result[character] + addition, 4);
             }
 
             return result;
