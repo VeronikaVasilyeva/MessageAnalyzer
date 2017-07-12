@@ -8,8 +8,8 @@
   {статистика} в виде JSON объекта {a:’0.01’, b:’0.0003’ ..} 
 
 ## Libraries
-* API Twitter
-* сериализация
+* LINQ to Twitter 4.1.0 - для работы с API Twitter
+* Newtonsoft.Json 10.0.3 - для работы с JSON 
 * NUnit
 
 ## Run
