@@ -7,8 +7,8 @@
     <ProjectGuid>{5F4038CC-48EE-41F5-AEE0-DDBE81F59C17}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>App.SocialNetworkServiceProject</RootNamespace>
-    <AssemblyName>App.SocialNetworkServiceProject</AssemblyName>
+    <RootNamespace>App.SocialNetworkService</RootNamespace>
+    <AssemblyName>App.SocialNetworkService</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

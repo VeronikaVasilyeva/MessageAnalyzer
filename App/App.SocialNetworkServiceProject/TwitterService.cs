@@ -1,22 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace App.SocialNetworkServiceProject
+namespace App.SocialNetworkService
 {
     class TwitterService : ISocialNetworkService
     {
         private readonly static string ConsumerKey = "5PFhmG58BgUq9MkmSOXdr9P9o";
         private readonly static string ConsumerSecret = "9K9uIdrgN7j3XGg8SDvLKpVN0q1WPR0BfVDWGWRSH0qd9oA05M";
 
-        public string UserOAuth(string login, string password)
+        public string UserOAuthWithoutBrowser(string login, string password)
         {
             throw new NotImplementedException();
         }
 
-        public string UserOAuth(string token)
+        public string UserOAuthWithoutBrowser(string token)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string UserOAuthInBrowser(string login, string password)
         {
             throw new NotImplementedException();
         }
@@ -36,7 +42,12 @@ namespace App.SocialNetworkServiceProject
             throw new NotImplementedException();
         }
 
-        public string PublishEntry(string message)
+        public string PostEntry(string message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string MakeRequest(Url url, string data)
         {
             throw new NotImplementedException();
         }
