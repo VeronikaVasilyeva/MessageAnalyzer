@@ -26,7 +26,7 @@ namespace App.SocialNetworkService
                 throw;
             }
 
-            return "Успешная авторизация пользователя " + _userAuth.CredentialStore.ScreenName;
+            return $"Успешная авторизация пользователя {_userAuth.CredentialStore.ScreenName}";
         }
 
         public string AppOAuth()
@@ -47,19 +47,20 @@ namespace App.SocialNetworkService
         {
             var auth = _userAuth ?? _appAuth;
 
-            using (var twitterCtx = new TwitterContext(auth))
+            try
             {
-                var statusTweets =
-                    from tweet in twitterCtx.Status
-                    where tweet.Type == StatusType.User
-                          && tweet.ScreenName == username
-                          && tweet.Count == count
-                    select tweet;
-
-                return twitterCtx.Status
-                    .Where(tweet => tweet.Type == StatusType.User && tweet.ScreenName == username && tweet.Count == count)
-                    .Select(i => i.Text)
-                    .ToList();
+                using (var twitterCtx = new TwitterContext(auth))
+                {
+                    return twitterCtx.Status
+                        .Where(tweet => tweet.Type == StatusType.User && tweet.ScreenName == username && tweet.Count == count)
+                        .Select(i => i.Text)
+                        .ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
 
@@ -105,13 +106,13 @@ namespace App.SocialNetworkService
                 },
                 GoToTwitterAuthorization = pageLink =>
                 {
-                    Console.WriteLine("Если автоматический переход в браузер не произошел, зайдите в браузер самостоятельно и авторизуйтесь по этой ссылке:\n" + pageLink);
+                    Console.WriteLine("Если автоматический переход в браузер не произошел, зайдите в браузер самостоятельно и авторизуйтесь по этой ссылке:\n" + pageLink + "\n");
                     Process.Start(pageLink);
                 },
                 GetPin = () =>
                 {
-                    Console.WriteLine("Вы должны разрешить приложению доступ к вашему аккаунту иполучить PIN");
-                    Console.Write("Введите PIN: ");
+                    Console.WriteLine("Вы должны разрешить приложению доступ к вашему аккаунту и получить PIN");
+                    Console.WriteLine("Введите PIN: ");
                     return Console.ReadLine();
                 }
             };
