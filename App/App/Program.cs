@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using App.SocialNetworkService;
 using App.StatisticService;
@@ -10,30 +9,42 @@ namespace App
 {
     class Program
     {
-        private List<string> usernames = new List<string>();
-
+        private List<string> _usernames = new List<string>();
+        private static readonly string _messagePart = ", статистика для последних твитов: ";
+        private static readonly int _amountEntry = 150;
+        
         static void Main(string[] args)
         {
             ISocialNetworkService networkService = new TwitterService();
             networkService.AppOAuth();
-            var result = TextStatisticService.GetLetterFrequency
-                (String.Join
-                    (String.Empty, networkService.GetLastEntries("AsWeslyG", 5)));
 
-            var json = JsonConvert.SerializeObject(result, Formatting.None);
+            var username = "AsWeslyG";
+            var entries = networkService.GetLastEntries(username, _amountEntry);
+
+            var message = MakePostEntry(username, entries);
+
+            networkService.UserOAuth();
+            networkService.PostEntry(message);
+
+            Console.WriteLine("Press enter...");
+            Console.ReadLine();
+        }
+
+        private static string MakePostEntry(string username, List<string> entries)
+        {
+            var etriesToString = String.Join(String.Empty, entries);
+            var letterFrequency = TextStatisticService.GetLetterFrequency(etriesToString);
+            var json = JsonConvert.SerializeObject(letterFrequency, Formatting.None);
 
             var str = new StringBuilder();
-            str.Append("@AsWeslyG");
-            str.Append(", статистика для последних 5 твитов: ");
+            str.Append("@");
+            str.Append(username);
+            str.Append(_messagePart);
             str.Append(json);
             str.Length = 140;
 
-            networkService.UserOAuth();
-            networkService.PostEntry(str.ToString());
-
-            Console.ReadKey();
+            return str.ToString();
         }
-
     }
 
 }
