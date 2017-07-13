@@ -14,7 +14,7 @@ namespace App.StatisticService
                 return new Dictionary<char, double>();
             }
 
-            var regex = new Regex("[\\d\\W]"); //регулярка для удаления цифр и всех не буквенных символов
+            var regex = new Regex("[\\d\\W_]"); //регулярка для удаления цифр и всех не буквенных символов
             var pureText = regex.Replace(text, string.Empty);
 
             var length = (double) pureText.Length;

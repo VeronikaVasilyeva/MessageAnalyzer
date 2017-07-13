@@ -104,12 +104,16 @@ namespace App
                 if (string.IsNullOrEmpty(username))
                 {
                     Console.WriteLine("Невалидное имя:" + readLine);
+                    Console.Write(" >> ");
+                    readLine = Console.ReadLine();
                     continue; 
                 }
 
                 if (Users.ContainsKey(username))
                 {
                     Console.WriteLine("Такой пользоватеь уже добавлен: " + username);
+                    Console.Write(" >> ");
+                    readLine = Console.ReadLine();
                     continue;
                 }
 
