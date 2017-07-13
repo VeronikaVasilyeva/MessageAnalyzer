@@ -5,7 +5,12 @@ namespace App.SocialNetworkService
 {
     public class FacebookService : ISocialNetworkService
     {
-        public string AppOAuth()
+        public void UserOAuth()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AppOAuth()
         {
             throw new NotImplementedException();
         }
@@ -20,12 +25,7 @@ namespace App.SocialNetworkService
             throw new NotImplementedException();
         }
 
-        public string PostEntry(string message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string UserOAuth()
+        public void PostEntry(string message)
         {
             throw new NotImplementedException();
         }

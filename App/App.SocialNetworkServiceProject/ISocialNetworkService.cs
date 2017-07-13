@@ -9,14 +9,14 @@ namespace App.SocialNetworkService
         /// Подробнее см.документацию Twitter OAuth
         /// </summary>
         /// <returns></returns>
-        string UserOAuth();
+        void UserOAuth();
 
         /// <summary>
         /// Авторизация приложения. Позволяет совершать действия от имени приложения.
         /// Подробнее см.документацию Twitter OAuth
         /// </summary>
         /// <returns></returns>
-        string AppOAuth();
+        void AppOAuth();
 
         /// <summary>
         /// LogOut для пользователя. 
@@ -38,7 +38,7 @@ namespace App.SocialNetworkService
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        string PostEntry(string message);
+        void PostEntry(string message);
 
     }
 }

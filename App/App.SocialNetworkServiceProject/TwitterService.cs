@@ -18,8 +18,10 @@ namespace App.SocialNetworkService
             _userAuth?.CredentialStore.ClearAsync().Wait();
         }
 
-        public string UserOAuth()
+        public void UserOAuth()
         {
+            if (_userAuth != null) return;
+
             try
             {
                 OAuth1().Wait();
@@ -29,11 +31,9 @@ namespace App.SocialNetworkService
                 Console.WriteLine(e);
                 throw;
             }
-
-            return $"Успешная авторизация пользователя {_userAuth.CredentialStore.ScreenName}";
         }
 
-        public string AppOAuth()
+        public void AppOAuth()
         {
             try
             {
@@ -44,7 +44,6 @@ namespace App.SocialNetworkService
                 Console.WriteLine(e);
                 throw;
             }
-            return "Успешная авторизация приложения";
         }
 
         public List<string> GetLastEntries(string username, int count)
@@ -68,7 +67,7 @@ namespace App.SocialNetworkService
             }
         }
 
-        public string PostEntry(string message)
+        public void PostEntry(string message)
         {
             try
             {
@@ -82,7 +81,6 @@ namespace App.SocialNetworkService
                 Console.WriteLine(e);
                 throw;
             }
-            return "Успешно добавлен ваш твит";
         }
 
         private async Task OAuth2()

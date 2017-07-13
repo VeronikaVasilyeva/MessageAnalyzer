@@ -5,12 +5,12 @@ namespace App.SocialNetworkService
 {
     public class VkontakteService : ISocialNetworkService
     {
-        public string UserOAuth()
+        public void UserOAuth()
         {
             throw new NotImplementedException();
         }
 
-        public string AppOAuth()
+        public void AppOAuth()
         {
             throw new NotImplementedException();
         }
@@ -25,7 +25,7 @@ namespace App.SocialNetworkService
             throw new NotImplementedException();
         }
 
-        public string PostEntry(string message)
+        public void PostEntry(string message)
         {
             throw new NotImplementedException();
         }

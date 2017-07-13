@@ -114,7 +114,7 @@ namespace App
                 }
 
                 Users.Add(username, new User { Name = username });
-                Console.Write(">> ");
+                Console.Write(" >> ");
                 readLine = Console.ReadLine();
             }
         }
@@ -165,7 +165,7 @@ namespace App
 
             if (Users[username].Statistic == null)
             {
-                Console.WriteLine("Статистика для этогопользователя не посчитана. Запустите команду stat.");
+                Console.WriteLine("Статистика для этого пользователя не посчитана. Запустите команду stat.");
                 return;
             }
 
@@ -182,7 +182,7 @@ namespace App
 
             if (Users[username].Statistic == null)
             {
-                Console.WriteLine("Статистика для этогопользователя не посчитана. Запустите команду stat.");
+                Console.WriteLine("Статистика для этого пользователя не посчитана. Запустите команду stat.");
                 return;
             }
 
@@ -196,6 +196,8 @@ namespace App
                 Console.WriteLine(e);
                 throw;
             }
+
+            Console.WriteLine("Успешно опубликован ваш твит");
         }
 
         private static Action<IEnumerable<string>> Execute(Action aсtion)
