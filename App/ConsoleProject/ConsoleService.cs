@@ -9,7 +9,7 @@ namespace App.ConsoleService
 {
     class ConsoleService
     {
-            private Dictionary<string, Action<IEnumerable<string>>> _allCommand =
+            private Dictionary<string, Action<IEnumerable<string>>> _allCommandDictionary =
                 new Dictionary<string, Action<IEnumerable<string>>>
                 {
                     { "help", ExecuteCommand(() => { Console.WriteLine(File.ReadAllText("\\help.txt")); })},
@@ -18,10 +18,10 @@ namespace App.ConsoleService
 
                     { "exit", ExecuteCommand(() => Environment.Exit(0))},
 
-                    { "add", ExecuteCommand(() => Console.Clear())  },
-                    { "stat" , ExecuteCommand(() => Console.Clear())  },
+                    { "add", ExecuteCommand(Console.Clear)},
+                    { "stat" , ExecuteCommand(Console.Clear)  },
 
-                    { "post", ExecuteCommand(() => Console.Clear())  },
+                    { "post", ExecuteCommand(Console.Clear)  },
                 };
 
             public static List<string> ReadLogins()
@@ -31,13 +31,13 @@ namespace App.ConsoleService
                 return null;
             }
 
-            private static Action<IEnumerable<string>> ExecuteCommand(Action a)
+            private static Action<IEnumerable<string>> ExecuteCommand(Action aсtion)
             {
                 return args =>
                 {
                     if (args.Any())
                         throw new ArgumentException("this command doesn't support args");
-                    a();
+                    aсtion();
                 };
             }
 
