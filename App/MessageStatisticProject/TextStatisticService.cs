@@ -11,7 +11,7 @@ namespace App.StatisticService
     {
         public static Dictionary<char, double> GetLetterFrequency(string text)
         {
-            if (text == null || text.Equals(String.Empty)) return null;
+            if (string.IsNullOrEmpty(text)) return null;
 
             var result = new Dictionary<char, double>();
 
