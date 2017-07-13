@@ -11,26 +11,19 @@ namespace App.StatisticService
     {
         public static Dictionary<char, double> GetLetterFrequency(string text)
         {
-            if (string.IsNullOrEmpty(text)) return null;
-
-            var result = new Dictionary<char, double>();
-
-            var regex = new Regex("[\\d\\W]");
-            var chars = regex.Replace(text, string.Empty).ToCharArray();
-
-            double addition = 1 / (double) chars.Length;
-
-            foreach (var character in chars)
+            if (string.IsNullOrEmpty(text))
             {
-                if (!result.ContainsKey(character))
-                {
-                    result[character] = 0;
-                }
-
-                result[character] = Math.Round(result[character] + addition, 3);
+                return new Dictionary<char, double>();
             }
 
-            return result;
+            var regex = new Regex("[\\d\\W]"); //регулярка для удаления цифр и всех не буквенных символов
+            var pureText = regex.Replace(text, string.Empty);
+
+            var length = (double) pureText.Length;
+
+            return pureText.ToCharArray()
+                .GroupBy(i => i)
+                .ToDictionary(i => i.Key, j => Math.Round(j.Count() / length, 3));
         }
     }
 }
