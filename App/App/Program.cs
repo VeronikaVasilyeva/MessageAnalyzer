@@ -31,11 +31,6 @@ namespace App
                 { "post",   ExecuteWithParams( args => PostStatisticByUser(args.ElementAt(0)))},
             };
 
-        private static void LogOut()
-        {
-            NetworkService.UserLogOut();
-        }
-
         public static Dictionary<string, User> Users = new Dictionary<string, User>();
 
         private static readonly string _messagePart = ", статистика для последних твитов: ";
@@ -58,9 +53,9 @@ namespace App
 
                 if (readLine != null)
                 {
-                    List<string> tokens = readLine.ToLower().Split(' ').ToList<string>();
+                    List<string> tokens = readLine.Split(' ').ToList<string>();
 
-                    string commandName = tokens[0];
+                    string commandName = tokens[0].ToLower();
                     if (string.IsNullOrEmpty(commandName)) continue;
 
                     var commandArgs = new String[10];
@@ -87,23 +82,25 @@ namespace App
                     }
                 }
             }
-
         }
 
+        private static void LogOut()
+        {
+            NetworkService.UserLogOut();
+        }
 
         private static void ReadLogins()
         {
-            var listLogins = new List<string>();
             var readLine = Console.ReadLine();
 
             while (!string.IsNullOrEmpty(readLine))
             {
-                var regex = new Regex("$@{0,1}(\\w+)");
-                var username = regex.Match(readLine).Value;
+                var regex = new Regex("@{0,1}(\\w+)");
+                var username = regex.Match(readLine).Groups[1].Value;
 
                 if (string.IsNullOrEmpty(username))
                 {
-                    Console.WriteLine("Невалидное имя:" + username);
+                    Console.WriteLine("Невалидное имя:" + readLine);
                     continue; 
                 }
 
@@ -133,6 +130,11 @@ namespace App
             {
                 var user = Users[username];
 
+                if (user.Enties != null)
+                {
+                    continue;
+                }
+
                 var entries = NetworkService.GetLastEntries(username, _amountEntry);
                 user.Enties = entries;
 
@@ -143,6 +145,18 @@ namespace App
 
         private static void PrintStatisticByUser(string username)
         {
+            if (!Users.ContainsKey(username))
+            {
+                Console.WriteLine("Этот пользователь не был добавлен в список");
+                return;
+            }
+
+            if (!Users.ContainsKey(username))
+            {
+                Console.WriteLine("Этот пользователь не был добавлен в список");
+                return;
+            }
+
             Console.WriteLine(GetJsonStatistic(username));
         }
 
@@ -164,7 +178,12 @@ namespace App
 
         private static Action<IEnumerable<string>> ExecuteWithParams(Action<IEnumerable<string>> aсtion)
         {
-            return aсtion;
+            return args =>
+            {
+                if (args.Any(i => i == null))
+                    throw new ArgumentException("Необходимы аргументы");
+                aсtion(args);
+            };
         }
     }
 
