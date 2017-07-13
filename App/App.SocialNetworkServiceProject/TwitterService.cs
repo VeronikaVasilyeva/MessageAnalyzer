@@ -15,7 +15,7 @@ namespace App.SocialNetworkService
 
         public void UserLogOut()
         {
-            _userAuth.CredentialStore.ClearAsync().Wait();
+            _userAuth?.CredentialStore.ClearAsync().Wait();
         }
 
         public string UserOAuth()
