@@ -56,7 +56,10 @@ namespace App.SocialNetworkService
                           && tweet.Count == count
                     select tweet;
 
-                return statusTweets.Select(i => i.Text).ToList();
+                return twitterCtx.Status
+                    .Where(tweet => tweet.Type == StatusType.User && tweet.ScreenName == username && tweet.Count == count)
+                    .Select(i => i.Text)
+                    .ToList();
             }
         }
 
@@ -93,17 +96,21 @@ namespace App.SocialNetworkService
 
         private async Task OAuth1()
         {
-            this._userAuth = new PinAuthorizer()
+            _userAuth = new PinAuthorizer()
             {
                 CredentialStore = new InMemoryCredentialStore
                 {
                     ConsumerKey = ConfigurationManager.AppSettings["twitterConsumerKey"],
                     ConsumerSecret = ConfigurationManager.AppSettings["twitterSecretKey"]
                 },
-                GoToTwitterAuthorization = pageLink => Process.Start(pageLink),
+                GoToTwitterAuthorization = pageLink =>
+                {
+                    Console.WriteLine("Если автоматический переход в браузер не произошел, зайдите в браузер самостоятельно и авторизуйтесь по этой ссылке:\n" + pageLink);
+                    Process.Start(pageLink);
+                },
                 GetPin = () =>
                 {
-                    Console.WriteLine("Вы должны получить PIN.\n");
+                    Console.WriteLine("Вы должны разрешить приложению доступ к вашему аккаунту иполучить PIN");
                     Console.Write("Введите PIN: ");
                     return Console.ReadLine();
                 }
