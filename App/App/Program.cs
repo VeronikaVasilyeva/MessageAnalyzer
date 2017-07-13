@@ -15,18 +15,20 @@ namespace App
         private static readonly Dictionary<string, Action<IEnumerable<string>>> AllCommandDictionary =
             new Dictionary<string, Action<IEnumerable<string>>>
             {
-                { "help", Execute(() => { Console.WriteLine(File.ReadAllText("\\help.txt")); })},
+                { "help",   Execute(() => { Console.WriteLine(File.ReadAllText(@"~/../../../help.txt")); })},
 
-                { "clear", Execute(Console.Clear) },
+                { "clear",  Execute(Console.Clear) },
 
-                { "exit", Execute(() => Environment.Exit(0))},
+                { "exit",   Execute(() => Environment.Exit(0))},
 
-                { "add", Execute(ReadLogins)},
-                { "stat" , Execute( MakeStatistic)},
+                { "add",    Execute(ReadLogins)},
+
+                { "stat" ,  Execute( MakeStatistic)},
+
+                { "logout", Execute(LogOut)},
 
                 { "print" , ExecuteWithParams( args => PrintStatisticByUser(args.ElementAt(0)) )},
-                { "post", ExecuteWithParams( args => PostStatisticByUser(args.ElementAt(0)))},
-                { "logout", Execute(LogOut)}
+                { "post",   ExecuteWithParams( args => PostStatisticByUser(args.ElementAt(0)))},
             };
 
         private static void LogOut()
@@ -49,19 +51,24 @@ namespace App
             {
                 NetworkService.AppOAuth();
 
-                Console.WriteLine("Пожалуйста, введите комманду. help - список всех комманд.");
-                Console.WriteLine(">> ");
+                Console.WriteLine("\nПожалуйста, введите комманду. help - список всех комманд.");
+                Console.Write(">> ");
 
                 string readLine = Console.ReadLine();
 
                 if (readLine != null)
                 {
-                    List<string> tokens = readLine.Split(' ').ToList<string>();
+                    List<string> tokens = readLine.ToLower().Split(' ').ToList<string>();
 
                     string commandName = tokens[0];
                     if (string.IsNullOrEmpty(commandName)) continue;
 
-                    IEnumerable<string> commandArgs = new[] {tokens[1]};
+                    var commandArgs = new String[10];
+
+                    if (tokens.Count > 1)
+                    {
+                        commandArgs = new[] { tokens[1] };
+                    }
                     
                     if (AllCommandDictionary.ContainsKey(commandName))
                     {
@@ -149,7 +156,7 @@ namespace App
         {
             return args =>
             {
-                if (args.Any())
+                if (args.Any(i => i != null))
                     throw new ArgumentException("Эта комманда не поддерживает аргументы");
                 aсtion();
             };
