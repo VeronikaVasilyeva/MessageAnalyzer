@@ -41,12 +41,13 @@ namespace App
         public static void Main(string[] args)
         {
             Console.WriteLine("Привет, я TwitterBot!");
+            Console.WriteLine("Справка по командам - help");
 
             while (true)
             {
                 NetworkService.AppOAuth();
 
-                Console.WriteLine("\nПожалуйста, введите комманду. help - список всех комманд.");
+                Console.WriteLine("\nПожалуйста, введите комманду.");
                 Console.Write(">> ");
 
                 string readLine = Console.ReadLine();
@@ -91,6 +92,8 @@ namespace App
 
         private static void ReadLogins()
         {
+            Console.WriteLine("Чтобы закончить добавление аккаунтов, введите пустую строку.");
+            Console.Write(" >> ");
             var readLine = Console.ReadLine();
 
             while (!string.IsNullOrEmpty(readLine))
@@ -111,6 +114,7 @@ namespace App
                 }
 
                 Users.Add(username, new User { Name = username });
+                Console.Write(">> ");
                 readLine = Console.ReadLine();
             }
         }
@@ -126,6 +130,12 @@ namespace App
 
         private static void MakeStatistic()
         {
+            if (Users.Keys.Count == 0)
+            {
+                Console.WriteLine("Список аккаунтов пуст. Добавьте с помощью команды add.");
+                return;
+            }
+
             foreach (var username in Users.Keys)
             {
                 var user = Users[username];
@@ -141,19 +151,21 @@ namespace App
                 var etriesToString = String.Join(String.Empty, entries);
                 user.Statistic = TextStatisticService.GetLetterFrequency(etriesToString);
             }
+
+            Console.WriteLine("Статистика успешно подсчитана. Посмотреть можно с помощью команды print с аргументом username.");
         }
 
         private static void PrintStatisticByUser(string username)
         {
             if (!Users.ContainsKey(username))
             {
-                Console.WriteLine("Этот пользователь не был добавлен в список");
+                Console.WriteLine("Этот пользователь не был добавлен в список. Добавьте его с помощью команды add.");
                 return;
             }
 
-            if (!Users.ContainsKey(username))
+            if (Users[username].Statistic == null)
             {
-                Console.WriteLine("Этот пользователь не был добавлен в список");
+                Console.WriteLine("Статистика для этогопользователя не посчитана. Запустите команду stat.");
                 return;
             }
 
@@ -162,8 +174,28 @@ namespace App
 
         private static void PostStatisticByUser(string username)
         {
-            NetworkService.UserOAuth();
-            NetworkService.PostEntry(GetJsonStatistic(username).Substring(0, 140));
+            if (!Users.ContainsKey(username))
+            {
+                Console.WriteLine("Этот пользователь не был добавлен в список. Добавьте его с помощью команды add.");
+                return;
+            }
+
+            if (Users[username].Statistic == null)
+            {
+                Console.WriteLine("Статистика для этогопользователя не посчитана. Запустите команду stat.");
+                return;
+            }
+
+            try
+            {
+                NetworkService.UserOAuth();
+                NetworkService.PostEntry(GetJsonStatistic(username).Substring(0, 140));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         private static Action<IEnumerable<string>> Execute(Action aсtion)
