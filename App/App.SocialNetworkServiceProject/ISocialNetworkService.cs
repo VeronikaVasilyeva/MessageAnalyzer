@@ -19,6 +19,13 @@ namespace App.SocialNetworkService
         string AppOAuth();
 
         /// <summary>
+        /// LogOut для пользователя. 
+        /// Подробнее см.документацию Twitter OAuth
+        /// </summary>
+        /// <returns></returns>
+        void UserLogOut();
+
+        /// <summary>
         /// Возвращает последние count постов у username
         /// </summary>
         /// <param name="username"></param>

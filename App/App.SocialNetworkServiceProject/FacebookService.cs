@@ -10,6 +10,11 @@ namespace App.SocialNetworkService
             throw new NotImplementedException();
         }
 
+        public void UserLogOut()
+        {
+            throw new NotImplementedException();
+        }
+
         public List<string> GetLastEntries(string username, int count)
         {
             throw new NotImplementedException();

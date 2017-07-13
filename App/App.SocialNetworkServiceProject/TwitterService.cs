@@ -13,6 +13,11 @@ namespace App.SocialNetworkService
         private IAuthorizer _userAuth;
         private IAuthorizer _appAuth;
 
+        public void UserLogOut()
+        {
+            _userAuth.CredentialStore.ClearAsync().Wait();
+        }
+
         public string UserOAuth()
         {
             try

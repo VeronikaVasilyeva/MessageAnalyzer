@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="User.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -84,14 +85,13 @@
       <Project>{5f4038cc-48ee-41f5-aee0-ddbe81f59c17}</Project>
       <Name>App.SocialNetworkService</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ConsoleProject\App.ConsoleService.csproj">
-      <Project>{f9a0cc05-b499-49f1-a371-e113dd5d6e4b}</Project>
-      <Name>App.ConsoleService</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MessageStatisticProject\App.StatisticService.csproj">
       <Project>{b92a4e65-a43f-4ff3-9104-f54b7839f96a}</Project>
       <Name>App.StatisticService</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="help.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
