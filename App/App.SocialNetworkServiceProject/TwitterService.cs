@@ -114,7 +114,7 @@ namespace App.SocialNetworkService
                 GetPin = () =>
                 {
                     Console.WriteLine("Вы должны разрешить приложению доступ к вашему аккаунту и получить PIN");
-                    Console.WriteLine("Введите PIN: ");
+                    Console.Write("Введите PIN: ");
                     return Console.ReadLine();
                 }
             };
