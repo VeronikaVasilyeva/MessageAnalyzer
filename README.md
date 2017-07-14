@@ -15,5 +15,3 @@
 * Newtonsoft.Json 10.0.3
 * NUnit
 
-## Run
-Скомпилировать код и запустить App.exe
