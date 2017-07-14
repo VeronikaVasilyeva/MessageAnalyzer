@@ -83,7 +83,25 @@ namespace App.StatisticService.UnitTest
             AssertDictionary(expected, actual);
         }
 
-        private void AssertDictionary(Dictionary<char, double> expected, Dictionary<char, double> actual)
+        [Test]
+        public void SpecialSimbolsTest()
+        {
+            var actual = TextStatisticService.GetLetterFrequency(" string №; %:_ \"№");
+
+            var expected = new Dictionary<char, double>
+            {
+                {'s', 0.167},
+                {'t', 0.167},
+                {'r', 0.167},
+                {'i', 0.167},
+                {'n', 0.167},
+                {'g', 0.167}
+            };
+
+            AssertDictionary(expected, actual);
+        }
+
+        private static void AssertDictionary(Dictionary<char, double> expected, Dictionary<char, double> actual)
         {
             Assert.AreEqual(expected.Keys, actual.Keys);
 
