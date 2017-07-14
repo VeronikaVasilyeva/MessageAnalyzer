@@ -72,9 +72,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FacebookService.cs" />
+    <Compile Include="Factory\SocialNetworkType.cs" />
     <Compile Include="ISocialNetworkService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SocialNetworkFactory.cs" />
+    <Compile Include="Factory\SocialNetworkFactory.cs" />
     <Compile Include="TwitterService.cs" />
     <Compile Include="VkontakteService.cs" />
   </ItemGroup>
