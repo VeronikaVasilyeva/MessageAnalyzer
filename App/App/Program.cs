@@ -33,20 +33,22 @@ namespace App
 
         public static Dictionary<string, User> Users = new Dictionary<string, User>();
 
-        private static readonly string _messagePart = ", статистика для последних твитов: ";
-        private static readonly int _amountEntry = 5;
+        private const string MessagePart = ", статистика для последних твитов: ";
+        private const int AmountEntry = 5;
 
-        private static readonly ISocialNetworkService NetworkService = new TwitterService();
+        private static ISocialNetworkService _networkService;
 
         public static void Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;     //для корректного вывода русских символов в консоли
             Console.WriteLine("Привет, я TwitterBot!");
             Console.WriteLine("Справка по командам - help");
 
+            _networkService = new TwitterService();
+            _networkService.AppOAuth();
+
             while (true)
             {
-                NetworkService.AppOAuth();
-
                 Console.WriteLine("\nПожалуйста, введите комманду.");
                 Console.Write(">> ");
 
@@ -56,7 +58,7 @@ namespace App
                 {
                     List<string> tokens = readLine.Split(' ').ToList<string>();
 
-                    string commandName = tokens[0].ToLower();
+                    var commandName = tokens[0].ToLower();
                     if (string.IsNullOrEmpty(commandName)) continue;
 
                     var commandArgs = new String[10];
@@ -87,7 +89,7 @@ namespace App
 
         private static void LogOut()
         {
-            NetworkService.UserLogOut();
+            _networkService.UserLogOut();
         }
 
         private static void ReadLogins()
@@ -123,15 +125,6 @@ namespace App
             }
         }
 
-        private static string GetJsonStatistic(string username)
-        {
-            var etriesToString = String.Join(String.Empty, Users[username].Enties);
-            var letterFrequency = TextStatisticService.GetLetterFrequency(etriesToString);
-            var json = JsonConvert.SerializeObject(letterFrequency, Formatting.None);
-
-            return "@" + username + _messagePart + json;
-        }
-
         private static void MakeStatistic()
         {
             if (Users.Keys.Count == 0)
@@ -149,7 +142,7 @@ namespace App
                     continue;
                 }
 
-                var entries = NetworkService.GetLastEntries(username, _amountEntry);
+                var entries = _networkService.GetLastEntries(username, AmountEntry);
                 user.Enties = entries;
 
                 var etriesToString = String.Join(String.Empty, entries);
@@ -161,47 +154,54 @@ namespace App
 
         private static void PrintStatisticByUser(string username)
         {
-            if (!Users.ContainsKey(username))
+            if (IsUserKnown(username))
             {
-                Console.WriteLine("Этот пользователь не был добавлен в список. Добавьте его с помощью команды add.");
-                return;
+                Console.WriteLine(GetJsonStatistic(username));
             }
-
-            if (Users[username].Statistic == null)
-            {
-                Console.WriteLine("Статистика для этого пользователя не посчитана. Запустите команду stat.");
-                return;
-            }
-
-            Console.WriteLine(GetJsonStatistic(username));
         }
 
         private static void PostStatisticByUser(string username)
         {
+            if (IsUserKnown(username))
+            {
+                try
+                {
+                    _networkService.UserOAuth();
+                    _networkService.PostEntry(GetJsonStatistic(username).Substring(0, 140));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+
+                Console.WriteLine("Успешно опубликован ваш твит");
+            }
+        }
+
+        private static string GetJsonStatistic(string username)
+        {
+            var etriesToString = String.Join(String.Empty, Users[username].Enties);
+            var letterFrequency = TextStatisticService.GetLetterFrequency(etriesToString);
+            var json = JsonConvert.SerializeObject(letterFrequency, Formatting.None);
+
+            return $"@{username}, статистика для последних твитов: {json}";
+        }
+
+        private static bool IsUserKnown(string username)
+        {
             if (!Users.ContainsKey(username))
             {
                 Console.WriteLine("Этот пользователь не был добавлен в список. Добавьте его с помощью команды add.");
-                return;
+                return false;
             }
 
             if (Users[username].Statistic == null)
             {
                 Console.WriteLine("Статистика для этого пользователя не посчитана. Запустите команду stat.");
-                return;
+                return false;
             }
-
-            try
-            {
-                NetworkService.UserOAuth();
-                NetworkService.PostEntry(GetJsonStatistic(username).Substring(0, 140));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-
-            Console.WriteLine("Успешно опубликован ваш твит");
+            return true;
         }
 
         private static Action<IEnumerable<string>> Execute(Action aсtion)
