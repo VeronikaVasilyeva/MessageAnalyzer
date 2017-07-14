@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using App.SocialNetworkService;
+using App.SocialNetworkService.Factory;
 using App.StatisticService;
 using Newtonsoft.Json;
 using static System.String;
@@ -14,6 +15,10 @@ namespace App
     class Program
     {
         private static ISocialNetworkService _networkService;
+
+        public static Dictionary<string, User> UserStore = new Dictionary<string, User>();
+
+        private const int AmountEntry = 5;
 
         private static readonly Dictionary<string, Action<IEnumerable<string>>> AllCommandDictionary =
             new Dictionary<string, Action<IEnumerable<string>>>
@@ -26,7 +31,7 @@ namespace App
 
                 { "add",    Execute(ReadLogins)},
 
-                { "stat" ,  Execute( MakeStatistic)},
+                { "stat" ,  Execute(MakeStatistic)},
 
                 { "logout", Execute(LogOut)},
 
@@ -35,18 +40,9 @@ namespace App
                 { "post",   ExecuteWithParams( args => PostStatisticByUser(args.ElementAt(0)))}
             };
 
-        public static Dictionary<string, User> Users = new Dictionary<string, User>();
-
-        private const int AmountEntry = 5;
-
         public static void Main(string[] args)
         {
-            Console.OutputEncoding = Encoding.UTF8;         //для корректного вывода русских символов в консоли
-            Console.WriteLine("Привет, я TwitterBot!");
-            Console.WriteLine("Справка по командам - help");
-
-            _networkService = new TwitterService();
-            _networkService.AppOAuth();
+            Init();
 
             while (true)
             {
@@ -63,26 +59,23 @@ namespace App
                     if (IsNullOrEmpty(commandName)) continue;
 
                     var commandArgs = new String[10];
-
-                    if (tokens.Count > 1)
-                    {
+                    if (tokens.Count > 1) {
                         commandArgs = new[] { tokens[1] };
                     }
-                    
-                    if (AllCommandDictionary.ContainsKey(commandName))
-                    {
-                        try
-                        {
-                            AllCommandDictionary[commandName](commandArgs);
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine($"Выполнение с ошибкой: { e.Message}");
-                        }
-                    }
-                    else
+
+                    if (!AllCommandDictionary.ContainsKey(commandName))
                     {
                         Console.WriteLine($"Такой комманды нет: {commandName}");
+                        continue;
+                    }
+
+                    try
+                    {
+                        AllCommandDictionary[commandName](commandArgs);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Выполнение с ошибкой: { e.Message}");
                     }
                 }
             }
@@ -113,7 +106,7 @@ namespace App
                     continue; 
                 }
 
-                if (Users.ContainsKey(username))
+                if (UserStore.ContainsKey(username))
                 {
                     Console.WriteLine($"Такой пользоватеь уже добавлен: {username}");
                     Console.Write(" >> ");
@@ -121,7 +114,7 @@ namespace App
                     continue;
                 }
 
-                Users.Add(username, new User{ Name = username });
+                UserStore.Add(username, new User{ Name = username });
                 Console.Write(" >> ");
                 readLine = Console.ReadLine();
             }
@@ -129,15 +122,17 @@ namespace App
 
         private static void MakeStatistic()
         {
-            if (Users.Keys.Count == 0)
+            if (UserStore.Keys.Count == 0)
             {
                 Console.WriteLine("Список аккаунтов пуст. Добавьте с помощью команды add.");
                 return;
             }
 
-            foreach (var username in Users.Keys)
+            Console.WriteLine("Подождите. Это может занять некоторое время.");
+
+            foreach (var username in UserStore.Keys)
             {
-                var user = Users[username];
+                var user = UserStore[username];
 
                 if (user.Enties != null)
                 {
@@ -156,6 +151,9 @@ namespace App
 
         private static void PrintStatisticByUser(string username)
         {
+            var regex = new Regex("\\@");
+            username = regex.Replace(username, String.Empty);
+
             if (IsUserKnown(username))
             {
                 Console.WriteLine(GetJsonStatistic(username));
@@ -164,6 +162,9 @@ namespace App
 
         private static void PostStatisticByUser(string username)
         {
+            var regex = new Regex("\\@");
+            username = regex.Replace(username, String.Empty);
+
             if (IsUserKnown(username))
             {
                 try
@@ -183,7 +184,7 @@ namespace App
 
         private static string GetJsonStatistic(string username)
         {
-            var etriesToString = Join(Empty, Users[username].Enties);
+            var etriesToString = Join(Empty, UserStore[username].Enties);
             var letterFrequency = TextStatisticService.GetLetterFrequency(etriesToString);
             var json = JsonConvert.SerializeObject(letterFrequency, Formatting.None);
 
@@ -192,18 +193,30 @@ namespace App
 
         private static bool IsUserKnown(string username)
         {
-            if (!Users.ContainsKey(username))
+            if (!UserStore.ContainsKey(username))
             {
                 Console.WriteLine("Этот пользователь не был добавлен в список. Добавьте его с помощью команды add.");
+                Console.WriteLine("Будьте внимательны, имя пользователя чувствительно к регистру.");
                 return false;
             }
 
-            if (Users[username].Statistic == null)
+            if (UserStore[username].Statistic == null)
             {
                 Console.WriteLine("Статистика для этого пользователя не посчитана. Запустите команду stat.");
                 return false;
             }
             return true;
+        }
+
+        private static void Init()
+        {
+            Console.OutputEncoding = Encoding.UTF8; //для корректного вывода русских символов в консоли
+
+            Console.WriteLine(@"Привет, я TwitterBot!");
+            Console.WriteLine(@"Справка по командам - help");
+
+            _networkService = SocialNetworkFactory.Create(SocialNetworkType.Twitter);
+            _networkService.AppOAuth();     //авторизуем приложение
         }
 
         private static Action<IEnumerable<string>> Execute(Action aсtion)
