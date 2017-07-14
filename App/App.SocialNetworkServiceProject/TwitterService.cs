@@ -13,11 +13,6 @@ namespace App.SocialNetworkService
         private IAuthorizer _userAuth;
         private IAuthorizer _appAuth;
 
-        public void UserLogOut()
-        {
-            _userAuth?.CredentialStore.ClearAsync().Wait();
-        }
-
         public void UserOAuth()
         {
             if (_userAuth != null) return;
@@ -44,6 +39,11 @@ namespace App.SocialNetworkService
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        public void UserLogOut()
+        {
+            _userAuth?.CredentialStore.ClearAsync().Wait();
         }
 
         public List<string> GetLastEntries(string username, int count)
@@ -108,7 +108,8 @@ namespace App.SocialNetworkService
                 },
                 GoToTwitterAuthorization = pageLink =>
                 {
-                    Console.WriteLine("Если автоматический переход в браузер не произошел, зайдите в браузер самостоятельно и авторизуйтесь по этой ссылке:\n" + pageLink + "\n");
+                    Console.WriteLine("Если автоматический переход в браузер не произошел, " +
+                                      $"зайдите в браузер самостоятельно и авторизуйтесь по этой ссылке:\n{pageLink}\n");
                     Process.Start(pageLink);
                 },
                 GetPin = () =>
