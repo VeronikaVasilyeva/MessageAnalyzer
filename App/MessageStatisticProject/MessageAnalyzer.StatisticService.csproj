@@ -7,8 +7,8 @@
     <ProjectGuid>{B92A4E65-A43F-4FF3-9104-F54B7839F96A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>App.StatisticService</RootNamespace>
-    <AssemblyName>App.StatisticService</AssemblyName>
+    <RootNamespace>MessageAnalyzer.StatisticService</RootNamespace>
+    <AssemblyName>MessageAnalyzer.StatisticService</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

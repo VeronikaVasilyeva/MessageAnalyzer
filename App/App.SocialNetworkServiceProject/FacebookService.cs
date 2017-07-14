@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace App.SocialNetworkService
+namespace MessageAnalyzer.SocialNetworkService
 {
     public class FacebookService : ISocialNetworkService
     {

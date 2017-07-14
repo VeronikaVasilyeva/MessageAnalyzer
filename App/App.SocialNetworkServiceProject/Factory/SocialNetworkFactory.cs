@@ -1,22 +1,22 @@
 ﻿using System;
 
-namespace App.SocialNetworkService.Factory
+namespace MessageAnalyzer.SocialNetworkService.Factory
 {
     public static class SocialNetworkFactory
     {
-            public static ISocialNetworkService Create(SocialNetworkType type)
+        public static ISocialNetworkService Create(SocialNetworkType type)
+        {
+            switch (type)
             {
-                switch (type)
-                {
-                    case SocialNetworkType.Facebook:
-                        return new FacebookService();
-                    case SocialNetworkType.Twitter:
-                        return new TwitterService();
-                    case SocialNetworkType.Vkontakte:
-                        return new VkontakteService();
-                    default:
-                        throw new NotSupportedException("сорри");
-                }
+                case SocialNetworkType.Facebook:
+                    return new FacebookService();
+                case SocialNetworkType.Twitter:
+                    return new TwitterService();
+                case SocialNetworkType.Vkontakte:
+                    return new VkontakteService();
+                default:
+                    throw new NotSupportedException("сорри");
             }
         }
+    }
 }

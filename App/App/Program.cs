@@ -4,40 +4,38 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using App.SocialNetworkService;
-using App.SocialNetworkService.Factory;
-using App.StatisticService;
+using MessageAnalyzer.SocialNetworkService;
+using MessageAnalyzer.SocialNetworkService.Factory;
+using MessageAnalyzer.StatisticService;
 using Newtonsoft.Json;
-using static System.String;
 
-namespace App
+namespace MessageAnalyzer.ConsoleProject
 {
-    class Program
+    internal class Program
     {
+        private const int AmountEntry = 5;
         private static ISocialNetworkService _networkService;
 
         public static Dictionary<string, User> UserStore = new Dictionary<string, User>();
 
-        private const int AmountEntry = 5;
-
         private static readonly Dictionary<string, Action<IEnumerable<string>>> AllCommandDictionary =
             new Dictionary<string, Action<IEnumerable<string>>>
             {
-                { "help",   Execute(() => { Console.WriteLine(File.ReadAllText(@"~/../../../help.txt")); })},
+                {"help", Execute(() => { Console.WriteLine(File.ReadAllText(@"~/../../../help.txt")); })},
 
-                { "clear",  Execute(Console.Clear) },
+                {"clear", Execute(Console.Clear)},
 
-                { "exit",   Execute(() => Environment.Exit(0))},
+                {"exit", Execute(() => Environment.Exit(0))},
 
-                { "add",    Execute(ReadLogins)},
+                {"add", Execute(ReadLogins)},
 
-                { "stat" ,  Execute(MakeStatistic)},
+                {"stat", Execute(MakeStatistic)},
 
-                { "logout", Execute(LogOut)},
+                {"logout", Execute(LogOut)},
 
-                { "print" , ExecuteWithParams( args => PrintStatisticByUser(args.ElementAt(0)) )},
+                {"print", ExecuteWithParams(args => PrintStatisticByUser(args.ElementAt(0)))},
 
-                { "post",   ExecuteWithParams( args => PostStatisticByUser(args.ElementAt(0)))}
+                {"post", ExecuteWithParams(args => PostStatisticByUser(args.ElementAt(0)))}
             };
 
         public static void Main(string[] args)
@@ -49,19 +47,17 @@ namespace App
                 Console.WriteLine("\nПожалуйста, введите комманду.");
                 Console.Write(">> ");
 
-                string readLine = Console.ReadLine();
+                var readLine = Console.ReadLine();
 
                 if (readLine != null)
                 {
-                    List<string> tokens = readLine.Split(' ').ToList<string>();
+                    var tokens = readLine.Split(' ').ToList();
 
                     var commandName = tokens[0].ToLower();
-                    if (IsNullOrEmpty(commandName)) continue;
+                    if (string.IsNullOrEmpty(commandName)) continue;
 
-                    var commandArgs = new String[10];
-                    if (tokens.Count > 1) {
-                        commandArgs = new[] { tokens[1] };
-                    }
+                    var commandArgs = new string[10];
+                    if (tokens.Count > 1) commandArgs = new[] {tokens[1]};
 
                     if (!AllCommandDictionary.ContainsKey(commandName))
                     {
@@ -75,7 +71,7 @@ namespace App
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine($"Выполнение с ошибкой: { e.Message}");
+                        Console.WriteLine($"Выполнение с ошибкой: {e.Message}");
                     }
                 }
             }
@@ -93,17 +89,17 @@ namespace App
             Console.Write(" >> ");
             var readLine = Console.ReadLine();
 
-            while (!IsNullOrEmpty(readLine))
+            while (!string.IsNullOrEmpty(readLine))
             {
                 var regex = new Regex("@{0,1}(\\w+)");
                 var username = regex.Match(readLine).Groups[1].Value;
 
-                if (IsNullOrEmpty(username))
+                if (string.IsNullOrEmpty(username))
                 {
                     Console.WriteLine($"Невалидное имя: {readLine}");
                     Console.Write(" >> ");
                     readLine = Console.ReadLine();
-                    continue; 
+                    continue;
                 }
 
                 if (UserStore.ContainsKey(username))
@@ -114,7 +110,7 @@ namespace App
                     continue;
                 }
 
-                UserStore.Add(username, new User{ Name = username });
+                UserStore.Add(username, new User {Name = username});
                 Console.Write(" >> ");
                 readLine = Console.ReadLine();
             }
@@ -135,35 +131,32 @@ namespace App
                 var user = UserStore[username];
 
                 if (user.Enties != null)
-                {
                     continue;
-                }
 
                 var entries = _networkService.GetLastEntries(username, AmountEntry);
                 user.Enties = entries;
 
-                var etriesToString = Join(Empty, entries);
+                var etriesToString = string.Join(string.Empty, entries);
                 user.Statistic = TextStatisticService.GetLetterFrequency(etriesToString);
             }
 
-            Console.WriteLine("Статистика успешно подсчитана. Посмотреть можно с помощью команды print с аргументом username.");
+            Console.WriteLine(
+                "Статистика успешно подсчитана. Посмотреть можно с помощью команды print с аргументом username.");
         }
 
         private static void PrintStatisticByUser(string username)
         {
             var regex = new Regex("\\@");
-            username = regex.Replace(username, String.Empty);
+            username = regex.Replace(username, string.Empty);
 
             if (IsUserKnown(username))
-            {
                 Console.WriteLine(GetJsonStatistic(username));
-            }
         }
 
         private static void PostStatisticByUser(string username)
         {
             var regex = new Regex("\\@");
-            username = regex.Replace(username, String.Empty);
+            username = regex.Replace(username, string.Empty);
 
             if (IsUserKnown(username))
             {
@@ -184,7 +177,7 @@ namespace App
 
         private static string GetJsonStatistic(string username)
         {
-            var etriesToString = Join(Empty, UserStore[username].Enties);
+            var etriesToString = string.Join(string.Empty, UserStore[username].Enties);
             var letterFrequency = TextStatisticService.GetLetterFrequency(etriesToString);
             var json = JsonConvert.SerializeObject(letterFrequency, Formatting.None);
 
@@ -216,7 +209,7 @@ namespace App
             Console.WriteLine(@"Справка по командам - help");
 
             _networkService = SocialNetworkFactory.Create(SocialNetworkType.Twitter);
-            _networkService.AppOAuth();     //авторизуем приложение
+            _networkService.AppOAuth(); //авторизуем приложение
         }
 
         private static Action<IEnumerable<string>> Execute(Action aсtion)
@@ -240,5 +233,4 @@ namespace App
             };
         }
     }
-
 }

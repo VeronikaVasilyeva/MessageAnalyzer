@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App", "App\App.csproj", "{0609857B-2ABE-4051-856B-A752DA49EDBC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageAnalyzer.ConsoleProject", "App\MessageAnalyzer.ConsoleProject.csproj", "{0609857B-2ABE-4051-856B-A752DA49EDBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.StatisticService", "MessageStatisticProject\App.StatisticService.csproj", "{B92A4E65-A43F-4FF3-9104-F54B7839F96A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageAnalyzer.StatisticService", "MessageStatisticProject\MessageAnalyzer.StatisticService.csproj", "{B92A4E65-A43F-4FF3-9104-F54B7839F96A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.SocialNetworkService", "App.SocialNetworkServiceProject\App.SocialNetworkService.csproj", "{5F4038CC-48EE-41F5-AEE0-DDBE81F59C17}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageAnalyzer.SocialNetworkService", "App.SocialNetworkServiceProject\MessageAnalyzer.SocialNetworkService.csproj", "{5F4038CC-48EE-41F5-AEE0-DDBE81F59C17}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

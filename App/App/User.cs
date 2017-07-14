@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace App
+namespace MessageAnalyzer.ConsoleProject
 {
-    class User
+    internal class User
     {
         public string Name { get; set; }
         public List<string> Enties { get; set; }

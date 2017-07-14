@@ -1,21 +1,51 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
 
-namespace App.StatisticService.UnitTest
+namespace MessageAnalyzer.StatisticService.UnitTest
 {
     [TestFixture]
-    class TextStatisticServiceTest
+    internal class TextStatisticServiceTest
     {
-        [Test]
-        public void NullTest()
+        private static void AssertDictionary(Dictionary<char, double> expected, Dictionary<char, double> actual)
         {
-            Assert.AreEqual(new Dictionary<char, double>(), TextStatisticService.GetLetterFrequency(null));
+            Assert.AreEqual(expected.Keys, actual.Keys);
+
+            foreach (var key in expected.Keys)
+                Assert.AreEqual(expected[key], actual[key], 0.001);
         }
 
         [Test]
         public void EmptyStringTest()
         {
             Assert.AreEqual(new Dictionary<char, double>(), TextStatisticService.GetLetterFrequency(""));
+        }
+
+        [Test]
+        public void ManySpacesStringTest()
+        {
+            var actual = TextStatisticService.GetLetterFrequency("        to much          spaces                  ");
+
+            var expected = new Dictionary<char, double>
+            {
+                {'t', 0.083},
+                {'o', 0.083},
+                {'m', 0.083},
+                {'u', 0.083},
+                {'c', 0.167},
+                {'h', 0.083},
+                {'s', 0.167},
+                {'p', 0.083},
+                {'a', 0.083},
+                {'e', 0.083}
+            };
+
+            AssertDictionary(expected, actual);
+        }
+
+        [Test]
+        public void NullTest()
+        {
+            Assert.AreEqual(new Dictionary<char, double>(), TextStatisticService.GetLetterFrequency(null));
         }
 
         [Test]
@@ -39,22 +69,18 @@ namespace App.StatisticService.UnitTest
         }
 
         [Test]
-        public void ManySpacesStringTest()
+        public void SpecialSimbolsTest()
         {
-            var actual = TextStatisticService.GetLetterFrequency("        to much          spaces                  ");
+            var actual = TextStatisticService.GetLetterFrequency(" string №; %:_ \"№");
 
             var expected = new Dictionary<char, double>
             {
-                {'t', 0.083},
-                {'o', 0.083},
-                {'m', 0.083},
-                {'u', 0.083},
-                {'c', 0.167},
-                {'h', 0.083},
                 {'s', 0.167},
-                {'p', 0.083},
-                {'a', 0.083},
-                {'e', 0.083}
+                {'t', 0.167},
+                {'r', 0.167},
+                {'i', 0.167},
+                {'n', 0.167},
+                {'g', 0.167}
             };
 
             AssertDictionary(expected, actual);
@@ -81,34 +107,6 @@ namespace App.StatisticService.UnitTest
             };
 
             AssertDictionary(expected, actual);
-        }
-
-        [Test]
-        public void SpecialSimbolsTest()
-        {
-            var actual = TextStatisticService.GetLetterFrequency(" string №; %:_ \"№");
-
-            var expected = new Dictionary<char, double>
-            {
-                {'s', 0.167},
-                {'t', 0.167},
-                {'r', 0.167},
-                {'i', 0.167},
-                {'n', 0.167},
-                {'g', 0.167}
-            };
-
-            AssertDictionary(expected, actual);
-        }
-
-        private static void AssertDictionary(Dictionary<char, double> expected, Dictionary<char, double> actual)
-        {
-            Assert.AreEqual(expected.Keys, actual.Keys);
-
-            foreach (var key in expected.Keys)
-            {
-                Assert.AreEqual(expected[key], actual[key], 0.001);
-            }
         }
     }
 }

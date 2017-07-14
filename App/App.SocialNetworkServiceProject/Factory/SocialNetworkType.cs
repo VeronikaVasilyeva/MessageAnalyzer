@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace App.SocialNetworkService.Factory
+﻿namespace MessageAnalyzer.SocialNetworkService.Factory
 {
     public enum SocialNetworkType
     {
@@ -12,5 +6,4 @@ namespace App.SocialNetworkService.Factory
         Twitter,
         Vkontakte
     }
-    
 }

@@ -6,12 +6,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using LinqToTwitter;
 
-namespace App.SocialNetworkService
+namespace MessageAnalyzer.SocialNetworkService
 {
     public class TwitterService : ISocialNetworkService
     {
-        private IAuthorizer _userAuth;
         private IAuthorizer _appAuth;
+        private IAuthorizer _userAuth;
 
         public void UserOAuth()
         {
@@ -55,7 +55,8 @@ namespace App.SocialNetworkService
                 using (var twitterCtx = new TwitterContext(auth))
                 {
                     return twitterCtx.Status
-                        .Where(tweet => tweet.Type == StatusType.User && tweet.ScreenName == username && tweet.Count == count)
+                        .Where(tweet => tweet.Type == StatusType.User && tweet.ScreenName == username &&
+                                        tweet.Count == count)
                         .Select(i => i.Text)
                         .ToList();
                 }
@@ -87,7 +88,7 @@ namespace App.SocialNetworkService
         {
             _appAuth = new ApplicationOnlyAuthorizer
             {
-                CredentialStore = new InMemoryCredentialStore()
+                CredentialStore = new InMemoryCredentialStore
                 {
                     ConsumerKey = ConfigurationManager.AppSettings["twitterConsumerKey"],
                     ConsumerSecret = ConfigurationManager.AppSettings["twitterSecretKey"]
@@ -99,7 +100,7 @@ namespace App.SocialNetworkService
 
         private async Task OAuth1()
         {
-            _userAuth = new PinAuthorizer()
+            _userAuth = new PinAuthorizer
             {
                 CredentialStore = new InMemoryCredentialStore
                 {
