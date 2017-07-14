@@ -7,11 +7,14 @@ using System.Text.RegularExpressions;
 using App.SocialNetworkService;
 using App.StatisticService;
 using Newtonsoft.Json;
+using static System.String;
 
 namespace App
 {
     class Program
     {
+        private static ISocialNetworkService _networkService;
+
         private static readonly Dictionary<string, Action<IEnumerable<string>>> AllCommandDictionary =
             new Dictionary<string, Action<IEnumerable<string>>>
             {
@@ -28,19 +31,17 @@ namespace App
                 { "logout", Execute(LogOut)},
 
                 { "print" , ExecuteWithParams( args => PrintStatisticByUser(args.ElementAt(0)) )},
-                { "post",   ExecuteWithParams( args => PostStatisticByUser(args.ElementAt(0)))},
+
+                { "post",   ExecuteWithParams( args => PostStatisticByUser(args.ElementAt(0)))}
             };
 
         public static Dictionary<string, User> Users = new Dictionary<string, User>();
 
-        private const string MessagePart = ", статистика для последних твитов: ";
         private const int AmountEntry = 5;
-
-        private static ISocialNetworkService _networkService;
 
         public static void Main(string[] args)
         {
-            Console.OutputEncoding = Encoding.UTF8;     //для корректного вывода русских символов в консоли
+            Console.OutputEncoding = Encoding.UTF8;         //для корректного вывода русских символов в консоли
             Console.WriteLine("Привет, я TwitterBot!");
             Console.WriteLine("Справка по командам - help");
 
@@ -59,7 +60,7 @@ namespace App
                     List<string> tokens = readLine.Split(' ').ToList<string>();
 
                     var commandName = tokens[0].ToLower();
-                    if (string.IsNullOrEmpty(commandName)) continue;
+                    if (IsNullOrEmpty(commandName)) continue;
 
                     var commandArgs = new String[10];
 
@@ -76,12 +77,12 @@ namespace App
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine("Выполнение с ошибкой: " + e.Message);
+                            Console.WriteLine($"Выполнение с ошибкой: { e.Message}");
                         }
                     }
                     else
                     {
-                        Console.WriteLine("Такой комманды нет: " + commandName);
+                        Console.WriteLine($"Такой комманды нет: {commandName}");
                     }
                 }
             }
@@ -90,22 +91,23 @@ namespace App
         private static void LogOut()
         {
             _networkService.UserLogOut();
+            Console.WriteLine("Пользователь разлогинился.");
         }
 
         private static void ReadLogins()
         {
-            Console.WriteLine("Чтобы закончить добавление аккаунтов, введите пустую строку.");
+            Console.WriteLine("Введите пустую строку, чтобы закончить добавление аккаунтов.");
             Console.Write(" >> ");
             var readLine = Console.ReadLine();
 
-            while (!string.IsNullOrEmpty(readLine))
+            while (!IsNullOrEmpty(readLine))
             {
                 var regex = new Regex("@{0,1}(\\w+)");
                 var username = regex.Match(readLine).Groups[1].Value;
 
-                if (string.IsNullOrEmpty(username))
+                if (IsNullOrEmpty(username))
                 {
-                    Console.WriteLine("Невалидное имя:" + readLine);
+                    Console.WriteLine($"Невалидное имя: {readLine}");
                     Console.Write(" >> ");
                     readLine = Console.ReadLine();
                     continue; 
@@ -113,13 +115,13 @@ namespace App
 
                 if (Users.ContainsKey(username))
                 {
-                    Console.WriteLine("Такой пользоватеь уже добавлен: " + username);
+                    Console.WriteLine($"Такой пользоватеь уже добавлен: {username}");
                     Console.Write(" >> ");
                     readLine = Console.ReadLine();
                     continue;
                 }
 
-                Users.Add(username, new User { Name = username });
+                Users.Add(username, new User{ Name = username });
                 Console.Write(" >> ");
                 readLine = Console.ReadLine();
             }
@@ -145,7 +147,7 @@ namespace App
                 var entries = _networkService.GetLastEntries(username, AmountEntry);
                 user.Enties = entries;
 
-                var etriesToString = String.Join(String.Empty, entries);
+                var etriesToString = Join(Empty, entries);
                 user.Statistic = TextStatisticService.GetLetterFrequency(etriesToString);
             }
 
@@ -181,7 +183,7 @@ namespace App
 
         private static string GetJsonStatistic(string username)
         {
-            var etriesToString = String.Join(String.Empty, Users[username].Enties);
+            var etriesToString = Join(Empty, Users[username].Enties);
             var letterFrequency = TextStatisticService.GetLetterFrequency(etriesToString);
             var json = JsonConvert.SerializeObject(letterFrequency, Formatting.None);
 
@@ -218,9 +220,10 @@ namespace App
         {
             return args =>
             {
-                if (args.Any(i => i == null))
+                var enumerable = args as string[] ?? args.ToArray();
+                if (enumerable.Any(i => i == null))
                     throw new ArgumentException("Необходимы аргументы");
-                aсtion(args);
+                aсtion(enumerable);
             };
         }
     }
